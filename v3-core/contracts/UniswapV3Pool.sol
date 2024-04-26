@@ -110,7 +110,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
 
     /// @dev Prevents calling a function from anyone except the address returned by IUniswapV3Factory#owner()
     modifier onlyFactoryOwner() {
-        require(msg.sender == IUniswapV3Factory(factory).owner());
+        require(msg.sender == IUniswapV3Factory(factory).owner(), "NA");
         _;
     }
 
@@ -140,7 +140,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
     function balance0() private view returns (uint256) {
         (bool success, bytes memory data) =
             token0.staticcall(abi.encodeWithSelector(IERC20Minimal.balanceOf.selector, address(this)));
-        require(success && data.length >= 32);
+        require(success && data.length >= 32, "B0");
         return abi.decode(data, (uint256));
     }
 
@@ -150,7 +150,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
     function balance1() private view returns (uint256) {
         (bool success, bytes memory data) =
             token1.staticcall(abi.encodeWithSelector(IERC20Minimal.balanceOf.selector, address(this)));
-        require(success && data.length >= 32);
+        require(success && data.length >= 32, "B1");
         return abi.decode(data, (uint256));
     }
 
@@ -185,7 +185,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
                 lower.secondsOutside,
                 lower.initialized
             );
-            require(initializedLower);
+            require(initializedLower, "IL");
 
             bool initializedUpper;
             (tickCumulativeUpper, secondsPerLiquidityOutsideUpperX128, secondsOutsideUpper, initializedUpper) = (
@@ -194,7 +194,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
                 upper.secondsOutside,
                 upper.initialized
             );
-            require(initializedUpper);
+            require(initializedUpper, "IU");
         }
 
         Slot0 memory _slot0 = slot0;
@@ -461,7 +461,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
         uint128 amount,
         bytes calldata data
     ) external override lock returns (uint256 amount0, uint256 amount1) {
-        require(amount > 0);
+        require(amount > 0, "AL");
         (, int256 amount0Int, int256 amount1Int) =
             _modifyPosition(
                 ModifyPositionParams({
@@ -838,7 +838,7 @@ contract UniswapV3Pool is IUniswapV3Pool, NoDelegateCall {
         require(
             (feeProtocol0 == 0 || (feeProtocol0 >= 4 && feeProtocol0 <= 10)) &&
                 (feeProtocol1 == 0 || (feeProtocol1 >= 4 && feeProtocol1 <= 10))
-        );
+        , "FE");
         uint8 feeProtocolOld = slot0.feeProtocol;
         slot0.feeProtocol = feeProtocol0 + (feeProtocol1 << 4);
         emit SetFeeProtocol(feeProtocolOld % 16, feeProtocolOld >> 4, feeProtocol0, feeProtocol1);

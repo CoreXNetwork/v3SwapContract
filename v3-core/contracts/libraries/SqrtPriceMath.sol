@@ -49,7 +49,7 @@ library SqrtPriceMath {
             uint256 product;
             // if the product overflows, we know the denominator underflows
             // in addition, we must check that the denominator does not underflow
-            require((product = amount * sqrtPX96) / amount == sqrtPX96 && numerator1 > product);
+            require((product = amount * sqrtPX96) / amount == sqrtPX96 && numerator1 > product, "SQ1");
             uint256 denominator = numerator1 - product;
             return FullMath.mulDivRoundingUp(numerator1, sqrtPX96, denominator).toUint160();
         }
@@ -90,7 +90,7 @@ library SqrtPriceMath {
                         : FullMath.mulDivRoundingUp(amount, FixedPoint96.Q96, liquidity)
                 );
 
-            require(sqrtPX96 > quotient);
+            require(sqrtPX96 > quotient, "SQ2");
             // always fits 160 bits
             return uint160(sqrtPX96 - quotient);
         }
@@ -109,8 +109,8 @@ library SqrtPriceMath {
         uint256 amountIn,
         bool zeroForOne
     ) internal pure returns (uint160 sqrtQX96) {
-        require(sqrtPX96 > 0);
-        require(liquidity > 0);
+        require(sqrtPX96 > 0, "SQ3");
+        require(liquidity > 0, "SQ4");
 
         // round to make sure that we don't pass the target price
         return
@@ -132,8 +132,8 @@ library SqrtPriceMath {
         uint256 amountOut,
         bool zeroForOne
     ) internal pure returns (uint160 sqrtQX96) {
-        require(sqrtPX96 > 0);
-        require(liquidity > 0);
+        require(sqrtPX96 > 0, "SQ5");
+        require(liquidity > 0, "SQ6");
 
         // round to make sure that we pass the target price
         return
@@ -161,7 +161,7 @@ library SqrtPriceMath {
         uint256 numerator1 = uint256(liquidity) << FixedPoint96.RESOLUTION;
         uint256 numerator2 = sqrtRatioBX96 - sqrtRatioAX96;
 
-        require(sqrtRatioAX96 > 0);
+        require(sqrtRatioAX96 > 0, "SQ7");
 
         return
             roundUp

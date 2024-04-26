@@ -187,7 +187,7 @@ contract NonfungiblePositionManager is
     }
 
     function tokenURI(uint256 tokenId) public view override(ERC721, IERC721Metadata) returns (string memory) {
-        require(_exists(tokenId));
+        require(_exists(tokenId), "TN");
         return INonfungibleTokenPositionDescriptor(_tokenDescriptor).tokenURI(this, tokenId);
     }
 
@@ -262,11 +262,11 @@ contract NonfungiblePositionManager is
         checkDeadline(params.deadline)
         returns (uint256 amount0, uint256 amount1)
     {
-        require(params.liquidity > 0);
+        require(params.liquidity > 0, "LL");
         Position storage position = _positions[params.tokenId];
 
         uint128 positionLiquidity = position.liquidity;
-        require(positionLiquidity >= params.liquidity);
+        require(positionLiquidity >= params.liquidity, "LE");
 
         PoolAddress.PoolKey memory poolKey = _poolIdToPoolKey[position.poolId];
         IUniswapV3Pool pool = IUniswapV3Pool(PoolAddress.computeAddress(factory, poolKey));
@@ -313,7 +313,7 @@ contract NonfungiblePositionManager is
         isAuthorizedForToken(params.tokenId)
         returns (uint256 amount0, uint256 amount1)
     {
-        require(params.amount0Max > 0 || params.amount1Max > 0);
+        require(params.amount0Max > 0 || params.amount1Max > 0, "CE");
         // allow collecting to the nft position manager address with address 0
         address recipient = params.recipient == address(0) ? address(this) : params.recipient;
 
