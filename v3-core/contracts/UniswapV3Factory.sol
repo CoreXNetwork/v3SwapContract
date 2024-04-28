@@ -19,6 +19,8 @@ contract UniswapV3Factory is IUniswapV3Factory, UniswapV3PoolDeployer, NoDelegat
     /// @inheritdoc IUniswapV3Factory
     mapping(address => mapping(address => mapping(uint24 => address))) public override getPool;
 
+    uint8 public defaultFeeProtocol = 170;
+
     constructor() {
         owner = msg.sender;
         emit OwnerChanged(address(0), msg.sender);
@@ -71,5 +73,18 @@ contract UniswapV3Factory is IUniswapV3Factory, UniswapV3PoolDeployer, NoDelegat
 
         feeAmountTickSpacing[fee] = tickSpacing;
         emit FeeAmountEnabled(fee, tickSpacing);
+    }
+    
+    function getFeeProtocol() public view returns(uint8) {
+        return defaultFeeProtocol;
+    }
+
+    function setFeeProtocol(uint8 feeProtocol0, uint8 feeProtocol1) public {
+        require(msg.sender == owner, "NA");
+        require(
+            (feeProtocol0 == 0 || (feeProtocol0 >= 4 && feeProtocol0 <= 10)) &&
+                (feeProtocol1 == 0 || (feeProtocol1 >= 4 && feeProtocol1 <= 10))
+        , "FE");
+        defaultFeeProtocol = feeProtocol0 + (feeProtocol1 << 4);
     }
 }
