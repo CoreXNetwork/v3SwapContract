@@ -28,7 +28,7 @@ library SqrtPriceMathPartial {
         uint256 numerator1 = uint256(liquidity) << FixedPoint96.RESOLUTION;
         uint256 numerator2 = sqrtRatioBX96 - sqrtRatioAX96;
 
-        require(sqrtRatioAX96 > 0, "ADE");
+        require(sqrtRatioAX96 > 0);
 
         return
             roundUp

@@ -20,7 +20,7 @@ abstract contract PeripheryPaymentsWithFee is PeripheryPayments, IPeripheryPayme
         uint256 feeBips,
         address feeRecipient
     ) public payable override {
-        require(feeBips > 0 && feeBips <= 100, "FE");
+        require(feeBips > 0 && feeBips <= 100);
 
         uint256 balanceWETH9 = IWETH9(WETH9).balanceOf(address(this));
         require(balanceWETH9 >= amountMinimum, 'Insufficient WETH9');
@@ -41,7 +41,7 @@ abstract contract PeripheryPaymentsWithFee is PeripheryPayments, IPeripheryPayme
         uint256 feeBips,
         address feeRecipient
     ) public payable override {
-        require(feeBips > 0 && feeBips <= 100, "FE");
+        require(feeBips > 0 && feeBips <= 100);
 
         uint256 balanceToken = IERC20(token).balanceOf(address(this));
         require(balanceToken >= amountMinimum, 'Insufficient token');

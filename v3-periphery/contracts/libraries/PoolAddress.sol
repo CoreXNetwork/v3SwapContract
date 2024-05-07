@@ -31,7 +31,7 @@ library PoolAddress {
     /// @param key The PoolKey
     /// @return pool The contract address of the V3 pool
     function computeAddress(address factory, PoolKey memory key) internal pure returns (address pool) {
-        require(key.token0 < key.token1, "CE");
+        require(key.token0 < key.token1);
         pool = address(
             uint256(
                 keccak256(

@@ -8,8 +8,8 @@ import './NoDelegateCall.sol';
 
 import './UniswapV3Pool.sol';
 
-/// @title Canonical COREX V3 factory
-/// @notice Deploys COREX V3 pools and manages ownership and control over pool protocol fees
+/// @title Canonical Uniswap V3 factory
+/// @notice Deploys Uniswap V3 pools and manages ownership and control over pool protocol fees
 contract UniswapV3Factory is IUniswapV3Factory, UniswapV3PoolDeployer, NoDelegateCall {
     /// @inheritdoc IUniswapV3Factory
     address public override owner;
@@ -24,7 +24,6 @@ contract UniswapV3Factory is IUniswapV3Factory, UniswapV3PoolDeployer, NoDelegat
     constructor() {
         owner = msg.sender;
         emit OwnerChanged(address(0), msg.sender);
-
         feeAmountTickSpacing[100] = 1;
         emit FeeAmountEnabled(100, 1);
         feeAmountTickSpacing[500] = 10;
@@ -41,12 +40,12 @@ contract UniswapV3Factory is IUniswapV3Factory, UniswapV3PoolDeployer, NoDelegat
         address tokenB,
         uint24 fee
     ) external override noDelegateCall returns (address pool) {
-        require(tokenA != tokenB, "NSORT");
+        require(tokenA != tokenB);
         (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-        require(token0 != address(0), "0_0");
+        require(token0 != address(0));
         int24 tickSpacing = feeAmountTickSpacing[fee];
-        require(tickSpacing != 0, "TS_0");
-        require(getPool[token0][token1][fee] == address(0), "PE");
+        require(tickSpacing != 0);
+        require(getPool[token0][token1][fee] == address(0));
         pool = deploy(address(this), token0, token1, fee, tickSpacing);
         getPool[token0][token1][fee] = pool;
         // populate mapping in the reverse direction, deliberate choice to avoid the cost of comparing addresses
@@ -56,25 +55,25 @@ contract UniswapV3Factory is IUniswapV3Factory, UniswapV3PoolDeployer, NoDelegat
 
     /// @inheritdoc IUniswapV3Factory
     function setOwner(address _owner) external override {
-        require(msg.sender == owner, "NA");
+        require(msg.sender == owner);
         emit OwnerChanged(owner, _owner);
         owner = _owner;
     }
 
     /// @inheritdoc IUniswapV3Factory
     function enableFeeAmount(uint24 fee, int24 tickSpacing) public override {
-        require(msg.sender == owner, "NA");
-        require(fee < 1000000, "LOW");
+        require(msg.sender == owner);
+        require(fee < 1000000);
         // tick spacing is capped at 16384 to prevent the situation where tickSpacing is so large that
         // TickBitmap#nextInitializedTickWithinOneWord overflows int24 container from a valid tick
         // 16384 ticks represents a >5x price change with ticks of 1 bips
-        require(tickSpacing > 0 && tickSpacing < 16384, "LIMIT");
-        require(feeAmountTickSpacing[fee] == 0, "EXIST");
+        require(tickSpacing > 0 && tickSpacing < 16384);
+        require(feeAmountTickSpacing[fee] == 0);
 
         feeAmountTickSpacing[fee] = tickSpacing;
         emit FeeAmountEnabled(fee, tickSpacing);
     }
-    
+
     function getFeeProtocol() public view returns(uint8) {
         return defaultFeeProtocol;
     }
