@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity =0.7.6;
 
-import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
-import '@openzeppelin/contracts/utils/Address.sol';
+import '../../../lib/openzeppelin/token/ERC721/ERC721.sol';
+import '../../../lib/openzeppelin/utils/Address.sol';
 
 import '../libraries/ChainId.sol';
 import '../interfaces/external/IERC1271.sol';
